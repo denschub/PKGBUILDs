@@ -2,7 +2,7 @@
 # Maintainer: Dennis Schubert <mail@dennis-schubert.de>
 pkgname=charybdis
 pkgver=3.4.2
-pkgrel=6
+pkgrel=7
 pkgdesc="A highly-scalable IRCv3-compliant IRC daemon"
 arch=('i686' 'x86_64')
 url="http://atheme.org/projects/charybdis.html"
