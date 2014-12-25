@@ -1,0 +1,52 @@
+# Contributor: JD Horelick <jdhore1@gmail.com>
+# Maintainer: Mantas Mikulėnas <grawity@gmail.com>
+pkgname=charybdis
+pkgver=3.4.2
+pkgrel=6
+pkgdesc="A highly-scalable IRCv3-compliant IRC daemon"
+arch=('i686' 'x86_64')
+url="http://www.atheme.org/project/charybdis"
+license=('GPL2')
+depends=(
+  'bison'
+  'flex'
+  'openssl'
+  'zlib'
+)
+source=("http://www.stack.nl/~jilles/irc/$pkgname-$pkgver.tbz2"
+        "$pkgname.service")
+install=$pkgname.install
+sha1sums=('59991a150279b8812a36e4e9d91120d736db0810'
+          'dc51586923c990214a78da19a3833a410503a205')
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+  ./configure \
+    --enable-fhs-paths                \
+    --prefix=/usr                     \
+    --sysconfdir=/etc/charybdis       \
+    --localstatedir=/var              \
+    --libexecdir=/usr/lib             \
+    --with-rundir=/run                \
+    --with-program-prefix=charybdis-  \
+    ;
+  make
+}
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver"
+  make DESTDIR="$pkgdir/" install
+
+  mkdir -p "$pkgdir/usr/share/doc"
+  cp -r doc "$pkgdir/usr/share/doc/charybdis"
+
+  mkdir -p "$pkgdir/usr/lib/tmpfiles.d"
+  echo 'd /run/charybdis 0755 charybdis charybdis -' \
+    > "$pkgdir/usr/lib/tmpfiles.d/charybdis.conf"
+  rm -rf "$pkgdir/run"
+
+  mkdir -p "$pkgdir/usr/lib/systemd/system"
+  cp "$srcdir/charybdis.service" "$pkgdir/usr/lib/systemd/system/"
+}
+
+# vim: ts=2:sw=2:et
